@@ -1,0 +1,30 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "lib": [
+      "ESNext",
+      "DOM",
+    ],
+    "module": "ESNext",
+    "target": "ES2015",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "composite": true,
+    "strict": true,
+    "downlevelIteration": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    // "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "types": [
+      "bun-types", // add Bun global,
+    ]
+  }
+}
