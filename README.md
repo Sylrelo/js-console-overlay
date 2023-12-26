@@ -21,14 +21,13 @@ Or if you don't want to open the full-fledged console to display rare occurence 
 
 - Display console Log, Error, Warn, Debug, Info messages
 - Display Fetch request
-
-## Planned features
 - Customization 
   - Position
   - Size
 - Auto-clear of old message
-- XMLHttpRequest
 
+## Planned features
+- XMLHttpRequest
 
 ## Usage
 
@@ -36,6 +35,32 @@ Simple download <a href="https://github.com/Sylrelo/js-console-overlay/raw/main/
 
 ```html
 <script src="js-console-overlay.min.js"></script>
+```
+
+You can set some options : 
+
+```html
+<script>
+    // Those are the default value, you can set only the one you're interested with.
+    overlayConsole.setOptions({
+      // Max displayed messages
+      maxMessage: 100,
+      // Auto-hide delay in seconds
+      autohideDelay: 10,
+      // Position of the container
+      // Possible values : BOTTOM-LEFT, BOTTOM-RIGHT, TOP-LEFT, TOP-RIGHT
+      position: "BOTTOM-LEFT",
+      // Left/Right margin in px
+      offsetX: 20,
+      // Top/Bottom margin in px
+      offsetY: 40,
+      // Max container height in px
+      maxHeight: 200,
+      // Max container width in px
+      // 0 is equal to (100vw - offsetX)
+      maxWidth: 0,
+    })
+</script>
 ```
 
 A bookmarklet and userscript version will be made available.

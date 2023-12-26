@@ -2,10 +2,14 @@ import { LogType } from ".";
 import ConsoleOverlayUtils from "./utils";
 
 export default class ConsoleOverlayBanner {
+  createdAt: number;
+  autohideModifier: number = 0;
 
   readonly element: HTMLElement;
 
   constructor(type: LogType, ...params: any[]) {
+    this.createdAt = Date.now();
+
     this.element = document.createElement("div");
     this.setBannerStyle();
     this.setLogStyle(type);
@@ -15,7 +19,6 @@ export default class ConsoleOverlayBanner {
   public changeStyle(type: LogType) {
     this.setLogStyle(type)
   }
-
 
   public addText(...params: any[]): void {
     this.element.innerHTML += " " + this.generateText(...params);
