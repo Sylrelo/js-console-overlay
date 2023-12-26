@@ -33,17 +33,7 @@ class ConsoleOverride {
     maxWidth: 0,
   }
 
-  private originalFn: Record<string, any> = {
-    log: undefined,
-    debug: undefined,
-    info: undefined,
-    warn: undefined,
-    error: undefined,
-  }
-
   constructor() {
-    this.storeOriginalFn();
-
     this.overrideFetch()
     this.overrideConsole("log");
     this.overrideConsole("debug");
@@ -59,8 +49,6 @@ class ConsoleOverride {
       ...this.options,
       ...options
     }
-
-    this.originalFn.log(this.options)
 
     document.body.removeChild(this.containerElement!);
     this.show()
@@ -107,22 +95,14 @@ class ConsoleOverride {
 
   private overrideConsole(type: LogType) {
     const that = this;
-    //@ts-ignore
-    window.console[type] = function (message: string, ...params: any) {
-      that.originalFn[type].bind(this, message, ...params)()
-      that.showLog(type, message, ...params)
-    };
-  }
 
-  private storeOriginalFn() {
-    this.originalFn = {
-      log: console.log,
-      info: console.info,
-      debug: console.debug,
-      warn: console.warn,
-      error: console.error,
-      fetch: window.fetch,
-    };
+    //@ts-ignore
+    console[type] = new Proxy(console[type], {
+      apply(target, thisArg, argArray) {
+        target.apply(thisArg, argArray);
+        that.showLog(type, ...argArray)
+      },
+    })
   }
 
   private createContainerElement(): HTMLElement {
@@ -211,7 +191,6 @@ class ConsoleOverride {
     this.containerElement!.insertBefore(banner.element, this.containerElement!.firstChild);
 
     this.messages.push(banner);
-
 
     if (this.messages.length >= this.options.maxMessage!) {
       this.messages = this.messages.slice(- this.options.maxMessage!)

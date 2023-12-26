@@ -25,9 +25,7 @@ export default class ConsoleOverlayUtils {
     return currentTime;
   }
 
-
-
-  public static formatData(data: any, parentType?: string): [string, any[]] {
+  public static formatData(data: any, parentType?: string, iteration: number = 0): [string, any[],] {
     let str = "";
     let exformat: any[] = []
 
@@ -57,7 +55,12 @@ export default class ConsoleOverlayUtils {
       };
 
       for (const key in data) {
-        let r = this.formatData(data[key], "object");
+
+        if (data[key] instanceof Window || key === "window" || key === "view" || key.toLowerCase().includes("target") || key === "srcElement" || key === "toElement" || key === "view") {
+          continue
+        }
+
+        let r = this.formatData(data[key], "object", iteration + 1);
 
         str += `${key}: ${r[0]}, `;
         f.data.push({
