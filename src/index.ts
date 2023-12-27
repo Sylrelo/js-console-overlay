@@ -14,6 +14,7 @@ interface Options {
   offsetY?: number,
   maxHeight?: number,
   maxWidth?: number,
+  opacity?: number,
 }
 
 class ConsoleOverride {
@@ -31,6 +32,7 @@ class ConsoleOverride {
     offsetY: 40,
     maxHeight: 200,
     maxWidth: 0,
+    opacity: 0.8
   }
 
   constructor() {
@@ -116,6 +118,7 @@ class ConsoleOverride {
 
           thisArg.upload.addEventListener("progress", (e: any) => {
             banner.setWebProgress(Math.round((e.loaded / e.total) * 100), e.total, e.loaded)
+            banner.autohideModifier += 1000
           })
         }
 
@@ -180,7 +183,7 @@ class ConsoleOverride {
       overflow: "auto",
       zIndex: "30000",
       maxWidth: this.options.maxWidth! > 10 ? `${this.options.maxWidth}px` : `calc(100vw - ${this.options.offsetX! * 2}px)`,
-      opacity: "0.65",
+      opacity: Math.max(0.0, Math.min(1.0, this.options.opacity!)),
       fontSize: "0.65rem",
       fontFamily: "monospace",
       ...position[this.options.position!]

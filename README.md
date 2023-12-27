@@ -34,11 +34,13 @@ Or if you don't want to open the full-fledged console to display rare occurence 
 
 ## Usage
 
-Simple download <a href="https://github.com/Sylrelo/js-console-overlay/raw/main/dist/js-console-overlay.min.js">js-console-overlay.min.js</a> and use it in your html file.
-
+Just insert this in your html, and it's done !
 ```html
-<script src="js-console-overlay.min.js"></script>
+<script src="https://sylrelo.github.io/js-console-overlay/dist/js-console-overlay.min.js"></script>
 ```
+
+(You can also manually download <a href="https://github.com/Sylrelo/js-console-overlay/raw/main/dist/js-console-overlay.min.js">js-console-overlay.min.js</a> and serve it yourself, obviously)
+
 
 You can set some options : 
 
@@ -62,6 +64,8 @@ You can set some options :
       // Max container width in px
       // 0 is equal to (100vw - offsetX)
       maxWidth: 0,
+      // Opacity of messages (0.0 - 1.0)
+      opacity: 0.8
     })
 </script>
 ```
