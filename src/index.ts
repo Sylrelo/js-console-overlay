@@ -1,6 +1,6 @@
 import type * as CSS from 'csstype';
 import ConsoleOverlayBanner from "./banner";
-import ConsoleOverlayUtils from "./utils";
+import Utils from "./utils";
 
 export type LogType = "log" | "debug" | "warn" | "error" | "info" | "web-success" | "web-pending" | "web-error";
 
@@ -34,14 +34,20 @@ class ConsoleOverride {
   }
 
   constructor() {
-    this.overrideFetch()
+    this.show()
+
     this.overrideConsole("log");
     this.overrideConsole("debug");
     this.overrideConsole("info");
     this.overrideConsole("warn");
     this.overrideConsole("error");
 
-    this.show()
+    window.onerror = (e, src, line, col, err) => {
+      this.showLog("error", err?.message, err?.cause, err?.stack)
+    }
+
+    this.overrideFetch()
+    this.overrideXmlHttpRequest()
   }
 
   public setOptions(options: Options) {
@@ -66,11 +72,9 @@ class ConsoleOverride {
         const resource = argArray[0] as Request;
 
         const banner = that.showLog(
-          "debug",
+          "web-pending",
           resource.method,
-          resource.url
-            .replace(location.protocol + "//", "")
-            .replace(location.hostname, "")
+          Utils.formatUrl(resource.url)
         );
 
         const startTime = Date.now();
@@ -93,6 +97,32 @@ class ConsoleOverride {
 
   }
 
+  private overrideXmlHttpRequest() {
+    const that = this;
+
+    XMLHttpRequest.prototype.open = new Proxy(XMLHttpRequest.prototype.open, {
+      apply(target, thisArg, argArray) {
+        //@ts-ignore
+        target.apply(thisArg, argArray);
+
+        const banner = that.showLog(
+          "web-pending",
+          argArray[0],
+          Utils.formatUrl(argArray[1]),
+        );
+
+        if (argArray[0] === "POST") {
+          banner.createWebProgressDiv();
+
+          thisArg.upload.addEventListener("progress", (e: any) => {
+            banner.setWebProgress(Math.round((e.loaded / e.total) * 100), e.total, e.loaded)
+          })
+        }
+
+      },
+    })
+  }
+
   private overrideConsole(type: LogType) {
     const that = this;
 
@@ -100,7 +130,13 @@ class ConsoleOverride {
     console[type] = new Proxy(console[type], {
       apply(target, thisArg, argArray) {
         target.apply(thisArg, argArray);
-        that.showLog(type, ...argArray)
+
+        const banner = that.showLog(type, ...argArray)
+
+        if (type === "error") {
+          const stackTrace = Error().stack?.split("\n").filter(str => str) ?? [];
+          banner.setStackTrace(stackTrace)
+        }
       },
     })
   }
@@ -135,7 +171,7 @@ class ConsoleOverride {
       },
     };
 
-    ConsoleOverlayUtils.setStyle(element, {
+    Utils.setStyle(element, {
       position: "absolute",
       display: "flex",
       gap: "2px",
@@ -170,16 +206,17 @@ class ConsoleOverride {
       const now = Date.now();
 
       for (const message of this.messages) {
+        try {
+          if (this.isMouseOver) {
+            message.autohideModifier += 1000;
+            continue;
+          }
 
-        if (this.isMouseOver) {
-          message.autohideModifier += 1000;
-          continue;
-        }
-
-        if (now - (message.createdAt + message.autohideModifier) > (this.options.autohideDelay! * 1000)) {
-          this.containerElement!.removeChild(message.element);
-          this.messages = this.messages.filter(el => el !== message);
-        }
+          if (now - (message.createdAt + message.autohideModifier) > (this.options.autohideDelay! * 1000)) {
+            this.containerElement!.removeChild(message.container);
+            this.messages = this.messages.filter(el => el !== message);
+          }
+        } catch (_) { }
       }
 
     }, 1000)
@@ -188,7 +225,7 @@ class ConsoleOverride {
   private showLog(type: LogType, ...params: any[]): ConsoleOverlayBanner {
     const banner = new ConsoleOverlayBanner(type, ...params);
 
-    this.containerElement!.insertBefore(banner.element, this.containerElement!.firstChild);
+    this.containerElement!.insertBefore(banner.container, this.containerElement!.firstChild);
 
     this.messages.push(banner);
 

@@ -20,14 +20,17 @@ Or if you don't want to open the full-fledged console to display rare occurence 
 ## Features
 
 - Display console Log, Error, Warn, Debug, Info messages
-- Display Fetch request
+- Display Fetch and XMLHttpRequest request
+- Display upload progress for XMLHttpRequest
 - Customization 
   - Position
   - Size
 - Auto-clear of old message
+- Show stack-trace on error
 
 ## Planned features
-- XMLHttpRequest
+- More infos on web-request
+
 
 ## Usage
 

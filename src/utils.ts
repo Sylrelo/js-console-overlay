@@ -1,13 +1,12 @@
 import type * as CSS from 'csstype';
 
-export default class ConsoleOverlayUtils {
+export default class Utils {
   public static setStyle(element: HTMLElement, styles: CSS.Properties) {
     for (const key in styles) {
       //@ts-ignore
       element.style[key] = styles[key as CSS.Pro];
     }
   }
-
 
   public static getCurrentTime(): string {
     const time = new Date();
@@ -101,5 +100,30 @@ export default class ConsoleOverlayUtils {
     }
 
     return [str, exformat];
+  }
+
+  public static formatUrl(url: string): string {
+    return url.replace(location.protocol + "//", "")
+      .replace(location.hostname, "");
+  }
+
+  public static formatSize(size: number) {
+    if (size === 0) {
+      return "0"
+    }
+
+    let result = size.toString();
+
+    const div = (n: number, post: string) => {
+      if (size > n) result = `${(size / n).toFixed(2)} ${post}`;
+    };
+
+    result = `${size} B`;
+
+    div(1000, "KB");
+    div(1000000, "MB");
+    div(1000000000, "GB");
+
+    return result;
   }
 }
