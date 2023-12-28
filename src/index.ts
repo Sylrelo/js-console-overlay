@@ -48,6 +48,16 @@ class ConsoleOverride {
       this.showLog("error", err?.message, err?.cause, err?.stack)
     }
 
+    window.onunhandledrejection = (e,) => {
+      const banner = this.showLog("error", e?.type, e.reason?.message)
+
+      if (e.reason?.stack) {
+        //@ts-ignore
+        const stackTrace = e.reason.stack.split("\n").filter(str => str) ?? [];
+        banner.setStackTrace(stackTrace)
+      }
+    }
+
     this.overrideFetch()
     this.overrideXmlHttpRequest()
   }
