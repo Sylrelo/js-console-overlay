@@ -83,10 +83,11 @@ class ConsoleOverride {
       async apply(target, thisArg, argArray: any[]) {
         const resource = argArray[0] as Request;
 
+
         const banner = that.showLog(
           "web-pending",
           resource.method,
-          Utils.formatUrl(resource.url)
+          Utils.formatUrl(resource.url ?? resource)
         );
 
         const startTime = Date.now();
