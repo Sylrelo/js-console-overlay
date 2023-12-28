@@ -63,6 +63,7 @@ export default class ConsoleOverlayBanner {
       width: "fit-content",
       padding: "0px 8px",
       borderRadius: "2px",
+      color: "white"
     })
 
     Utils.setStyle(this.element, {
