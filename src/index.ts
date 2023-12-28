@@ -45,7 +45,13 @@ class ConsoleOverride {
     this.overrideConsole("error");
 
     window.onerror = (e, src, line, col, err) => {
-      this.showLog("error", err?.message, err?.cause, err?.stack)
+      const banner = this.showLog("error", err?.message, err?.cause)
+
+      if (err?.stack) {
+        //@ts-ignore
+        const stackTrace = err.stack.split("\n").filter(str => str) ?? [];
+        banner.setStackTrace(stackTrace)
+      }
     }
 
     window.onunhandledrejection = (e,) => {
